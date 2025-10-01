@@ -13,6 +13,9 @@
         android:theme="@style/Theme.LevanF"
         tools:targetApi="31">
         <activity
+            android:name=".CrearPerfil"
+            android:exported="false" />
+        <activity
             android:name=".VerTramosActivity"
             android:exported="false" />
         <activity

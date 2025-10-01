@@ -42,5 +42,12 @@
     <string name="limpiar">Limpiar</string>
     <string name="velocidad">Velocidad (RPM): </string>
     <string name="tramos_guardados">Tramos Guardados</string>
+    <string name="tituloPerfil">Generar Perfil</string>
+    <string name="unidades">"Unidades: \nmm"</string>
+    <string name="rodillo">Diametro \nRodillo</string>
+    <string name="base">Diametro\nBase\n</string>
+    <string name="regresar">Regresar</string>
+    <string name="ver_perfil">Ver Perfil</string>
+    <string name="guardar_perfil">Guardar perfil</string>
 
 </resources>

@@ -4,6 +4,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.github.mikephil.charting.charts.LineChart
@@ -110,6 +112,13 @@ class GraphsActivity : AppCompatActivity() {
                 )
                 loadChartData(sacudimientoChart, entriesSacudimiento, "Sacudimiento")
                 xAnterior += tramo.ejeX.toInt()
+            }
+
+            findViewById<Button>(R.id.btnCrearPerfil).setOnClickListener {
+                val intent = Intent(this, CrearPerfil::class.java)
+                intent.putExtra("tramos", tramos)
+                intent.putExtra("rpm", rpm)
+                startActivity(intent)
             }
         }
     }
