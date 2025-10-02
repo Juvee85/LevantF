@@ -29,6 +29,7 @@ class GraphsActivity : AppCompatActivity() {
     // Altura acumulada y altura inicial para cálculos
     var alturaAcumulada: Double = 0.0
     var alturaInicial = 0.0
+    val valoresTeta = ArrayList<Array<Double>>()
 
     /**
      * Metodo llamado cuando se crea la actividad.
@@ -76,9 +77,8 @@ class GraphsActivity : AppCompatActivity() {
             var xAnterior = 0
             for (tramo in tramos) {
                 val calculadora = obtenerCalculadora(tramo)
-                entriesDesplazamiento.addAll(
-                    calcularDatosGrafica(tramo, rpm, calculadora, "desplazamiento", xAnterior)
-                )
+                val entries = calcularDatosGrafica(tramo, rpm, calculadora, "desplazamiento", xAnterior)
+                entriesDesplazamiento.addAll(entries)
                 loadChartData(desplazamientoChart, entriesDesplazamiento, "Desplazamiento")
                 xAnterior += tramo.ejeX.toInt()
                 alturaInicial = alturaAcumulada
@@ -118,6 +118,7 @@ class GraphsActivity : AppCompatActivity() {
                 val intent = Intent(this, CrearPerfil::class.java)
                 intent.putExtra("tramos", tramos)
                 intent.putExtra("rpm", rpm)
+                intent.putExtra("valoresTeta", valoresTeta)
                 startActivity(intent)
             }
         }
@@ -188,7 +189,12 @@ class GraphsActivity : AppCompatActivity() {
                 else -> 0.0
             }
 
-            entries.add(Entry(x.toFloat(), y.toFloat()))
+            val xGrados = x.aGrados()
+            if (tipoGrafica == "desplazamiento"){
+                valoresTeta.add(arrayOf(xGrados, y))
+            }
+
+            entries.add(Entry(xGrados.toFloat(), y.toFloat()))
         }
 
         return entries
@@ -206,6 +212,13 @@ class GraphsActivity : AppCompatActivity() {
      */
     fun Int.aRadianes(): Double {
         return this * Math.PI / 180
+    }
+
+    /**
+     * Convierte un valor en radianes a grados.
+     */
+    fun Double.aGrados(): Double {
+        return this * 180 / Math.PI
     }
 
     /**

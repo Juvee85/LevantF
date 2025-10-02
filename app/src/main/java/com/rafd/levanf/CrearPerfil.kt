@@ -8,13 +8,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.rafd.levanf.databinding.ActivityCrearPerfilBinding
+import com.rafd.levanf.databinding.ActivityMenuPrincipalBinding
 
 class CrearPerfil : AppCompatActivity() {
+    private lateinit var binding: ActivityCrearPerfilBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_crear_perfil)
+        binding = ActivityCrearPerfilBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+        val btnPerfil = binding.btnVerPerfil
         // Configura la toolbar
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         val extras = intent.extras
@@ -23,6 +28,16 @@ class CrearPerfil : AppCompatActivity() {
                 val intent = Intent(this, GraphsActivity::class.java)
                 intent.putExtra("tramos", extras.get("tramos") as ArrayList<Radial_LinealActivity.Tramo>)
                 intent.putExtra("rpm", extras.getDouble("rpm"))
+                startActivity(intent)
+            }
+
+            binding.btnVerPerfil.setOnClickListener {
+                val intent = Intent(this, PerfilGraphActivity::class.java)
+                intent.putExtra("tramos", extras.get("tramos") as ArrayList<Radial_LinealActivity.Tramo>)
+                intent.putExtra("rpm", extras.getDouble("rpm"))
+                intent.putExtra("valoresTeta", extras.get("valoresTeta") as ArrayList<Array<Double>>)
+                intent.putExtra("diametroBase", binding.etBase.text.toString().toDouble())
+                intent.putExtra("diametroRodillo", binding.etRodillo.text.toString().toDouble())
                 startActivity(intent)
             }
         }
