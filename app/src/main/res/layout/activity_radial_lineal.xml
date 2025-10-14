@@ -196,7 +196,7 @@
             <ListView
                 android:id="@+id/lista"
                 android:layout_width="match_parent"
-                android:layout_height="360dp"
+                android:layout_height="match_parent"
                 android:dividerHeight="4dp"
                 android:divider="@android:color/transparent"
                 android:layout_marginTop="8dp"

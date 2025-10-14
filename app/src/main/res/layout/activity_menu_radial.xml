@@ -14,8 +14,7 @@
         android:layout_height="wrap_content"
         android:elevation="4dp"
         app:navigationIcon="@drawable/flecha_atras_violeta"
-        app:titleTextColor="@color/black"
-        />
+        app:titleTextColor="@color/black" />
 
     <TextView android:id="@+id/tvRadial"
         android:layout_width="match_parent"
@@ -34,11 +33,22 @@
         android:textAlignment="center"
         />
 
-    <ImageButton android:id="@+id/btnLineal"
+    <androidx.cardview.widget.CardView
         android:layout_width="@dimen/ancho_imagen"
         android:layout_height="@dimen/altura_imagen"
+        app:cardCornerRadius="16dp"
         android:layout_gravity="center"
-        />
+        app:cardElevation="2dp">
+
+        <ImageButton android:id="@+id/btnLineal"
+            android:layout_width="@dimen/ancho_imagen"
+            android:layout_height="@dimen/altura_imagen"
+            android:src="@drawable/seguidorlineal"
+            android:scaleType="centerInside"
+            android:background="@android:color/transparent"
+            />
+
+    </androidx.cardview.widget.CardView>
 
     <TextView android:id="@+id/tvLineal"
         android:layout_width="match_parent"

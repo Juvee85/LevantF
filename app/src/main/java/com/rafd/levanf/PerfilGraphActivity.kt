@@ -4,7 +4,9 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -15,9 +17,14 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.ScatterData
 import com.github.mikephil.charting.data.ScatterDataSet
+import com.google.android.material.textfield.TextInputLayout
 import com.rafd.levanf.databinding.ActivityPerfilGraphBinding
+import exportar.Exportador
+import exportar.ExportadorExcel
+import exportar.Perfil
 import kotlin.math.cos
 import kotlin.math.sin
+
 
 class PerfilGraphActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPerfilGraphBinding
@@ -35,6 +42,10 @@ class PerfilGraphActivity : AppCompatActivity() {
 
         val perfilChart = binding.graficaPerfil
         val toolbar = binding.toolbar
+        val textInputLayout = TextInputLayout(this)
+        textInputLayout.setPadding(80,30, 80, 30)
+        val etNombre = EditText(this)
+        textInputLayout.addView(etNombre)
 
         val extras = intent.extras
         if (extras != null) {
@@ -50,6 +61,7 @@ class PerfilGraphActivity : AppCompatActivity() {
             val radioRodillo = extras.getDouble("diametroRodillo") / 2
 
             val entries = ArrayList<Entry>()
+            val pares = ArrayList<Pair<Double, Double>>()
             for (i in 0..360 step 10) {
                 val teta = valoresTeta.get(i)
                 val radioBaseX = radioBase * cos(i.aRadianes())
@@ -61,10 +73,31 @@ class PerfilGraphActivity : AppCompatActivity() {
                 val y = radioBaseY + tetaY
 
                 entries.add(Entry(x.toFloat(), y.toFloat()))
+                pares.add(Pair(x, y))
             }
 
             setupLineChart(binding.graficaPerfil, "Perfil")
             loadChartData(binding.graficaPerfil, entries, "Perfil")
+
+            binding.btnExportar.setOnClickListener {
+                AlertDialog.Builder(this)
+                    .setTitle("Nombre del archivo")
+                    .setView(textInputLayout)
+                    .setPositiveButton("Aceptar") { dialog, whichButton ->
+                        val nombre = etNombre.getText().toString()
+                        val perfil = Perfil(nombre, "Seguidor", "Lineal",
+                            radioRodillo,
+                            radioBase,
+                            pares)
+
+                        val exportador: Exportador
+                        exportador = ExportadorExcel()
+                        exportador.exportar(perfil, this)
+                    }
+                    .setNegativeButton("Cancelar") { dialog, whichButton -> }
+                    .show()
+            }
+
         }
 
     }

@@ -50,5 +50,6 @@
     <string name="ver_perfil">Ver Perfil</string>
     <string name="guardar_perfil">Guardar perfil</string>
     <string name="perfil_geometrico">Perfil Geométrico</string>
+    <string name="exportar">Exportar Perfil</string>
 
 </resources>
