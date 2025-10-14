@@ -16,7 +16,7 @@ class GeneradorCalculadoraBajada: GeneradorCalculadora {
      * Regresa una calculadora de bajada con las ecuaciones MAS
      */
     override fun crearCalculadoraMAS(): CalculadoraSVAJ {
-        TODO("Not yet implemented")
+        return CalculadoraBajadaMAS()
     }
 
     /**

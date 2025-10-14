@@ -238,6 +238,8 @@ class GraphsActivity : AppCompatActivity() {
             "subida", "bajada" -> {
                 if (ecuacion == "cicloidal") {
                     calculadora = generador.crearCalculadoraCicloidal()
+                } else if (ecuacion == "mas") {
+                    calculadora = generador.crearCalculadoraMAS()
                 }
             }
             "det. alto" -> {
