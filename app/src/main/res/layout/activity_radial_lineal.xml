@@ -106,6 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:background="@drawable/round_rec"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
@@ -124,14 +125,40 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etVelocidad"
-                        android:layout_width="225dp"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textAlignment="center"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:background="@drawable/round_input"
                         android:textColor="@color/black"
-                        android:inputType="number"/>
+                        android:inputType="numberDecimal"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/etPasolo"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:hint="@string/paso"
+                    android:textColor="@color/black_select"
+                    app:boxStrokeColor="@color/black_select"
+                    app:hintTextColor="@color/black_select">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/etPaso"
+                        android:layout_width="150dp"
+                        android:layout_height="52dp"
+                        android:gravity="center"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:background="@drawable/round_input"
+                        android:textColor="@color/black"
+                        android:inputType="none"
+                        tools:ignore="LabelFor" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -200,6 +227,7 @@
                 android:dividerHeight="4dp"
                 android:divider="@android:color/transparent"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="100dp"
                 />
 
             <androidx.coordinatorlayout.widget.CoordinatorLayout

@@ -36,6 +36,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import utils.limitarDecimal
 
 /**
  * Radial_LinealActivity es la actividad que permite a los usuarios gestionar tramos radiales y lineales.
@@ -110,6 +111,7 @@ class Radial_LinealActivity : AppCompatActivity() {
             val intent = Intent(this, GraphsActivity::class.java)
             intent.putExtra("tramos", tramos)
             intent.putExtra("rpm", findViewById<EditText>(R.id.etVelocidad).text.toString().toDouble())
+            intent.putExtra("paso", findViewById<AutoCompleteTextView>(R.id.etPaso).text.toString().toDouble())
             startActivity(intent)
         }
 
@@ -140,6 +142,21 @@ class Radial_LinealActivity : AppCompatActivity() {
         findViewById<EditText>(R.id.etVelocidad).doOnTextChanged { text, _, _, _ ->
             verificarDatos()
         }
+
+        val etPaso = findViewById<AutoCompleteTextView>(R.id.etPaso)
+        etPaso.setText("1", false)
+        etPaso.setAdapter(
+            ArrayAdapter(this,R.layout.item_op,
+                resources.getStringArray(R.array.pasos)
+            )
+        )
+
+        etPaso.setOnClickListener {
+            etPaso.showDropDown()
+        }
+
+
+        findViewById<EditText>(R.id.etVelocidad).limitarDecimal(5, 1)
     }
 
     /**

@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -20,6 +21,7 @@ import com.github.mikephil.charting.data.ScatterDataSet
 import com.google.android.material.textfield.TextInputLayout
 import com.rafd.levanf.databinding.ActivityPerfilGraphBinding
 import exportar.Exportador
+import utils.step
 import exportar.ExportadorExcel
 import exportar.Perfil
 import kotlin.math.cos
@@ -40,7 +42,6 @@ class PerfilGraphActivity : AppCompatActivity() {
             insets
         }
 
-        val perfilChart = binding.graficaPerfil
         val toolbar = binding.toolbar
         val textInputLayout = TextInputLayout(this)
         textInputLayout.setPadding(80,30, 80, 30)
@@ -53,21 +54,23 @@ class PerfilGraphActivity : AppCompatActivity() {
                 val intent = Intent(this, GraphsActivity::class.java)
                 intent.putExtra("tramos", extras.get("tramos") as ArrayList<Radial_LinealActivity.Tramo>)
                 intent.putExtra("rpm", extras.getDouble("rpm"))
+                intent.putExtra("paso", extras.getDouble("paso"))
                 startActivity(intent)
             }
 
-            val valoresTeta = extras.get("valoresTeta") as ArrayList<Array<Double>>
+            val valoresTeta = extras.get("valoresTeta") as ArrayList<Double>
+            val paso = extras.getDouble("paso")
             val radioBase = extras.getDouble("diametroBase") / 2
             val radioRodillo = extras.getDouble("diametroRodillo") / 2
 
             val entries = ArrayList<Entry>()
             val pares = ArrayList<Pair<Double, Double>>()
-            for (i in 0..360 step 10) {
-                val teta = valoresTeta.get(i)
+            for (i in 0..360 step paso) {
+                val teta = valoresTeta.get((i*(1/paso)).toInt())
                 val radioBaseX = radioBase * cos(i.aRadianes())
                 val radioBaseY = radioBase * sin(i.aRadianes())
-                val tetaX = teta.get(1) * cos(i.aRadianes())
-                val tetaY = teta.get(1) * sin(i.aRadianes())
+                val tetaX = teta * cos(i.aRadianes())
+                val tetaY = teta * sin(i.aRadianes())
 
                 val x = radioBaseX + tetaX
                 val y = radioBaseY + tetaY
@@ -79,6 +82,24 @@ class PerfilGraphActivity : AppCompatActivity() {
             setupLineChart(binding.graficaPerfil, "Perfil")
             loadChartData(binding.graficaPerfil, entries, "Perfil")
 
+            val folderPicker =
+                this.registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+                    uri?.let { selectedFolderUri ->
+                        contentResolver.takePersistableUriPermission(
+                            selectedFolderUri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        )
+
+                        val nombre = etNombre.getText().toString()
+                        val perfil = Perfil(nombre, "Seguidor", "Lineal",
+                            radioRodillo,
+                            radioBase,
+                            pares)
+                        val exportador = ExportadorExcel()
+                        exportador.exportar(perfil, this, selectedFolderUri)
+                    }
+                }
+
             binding.btnExportar.setOnClickListener {
                 AlertDialog.Builder(this)
                     .setTitle("Nombre del archivo")
@@ -89,10 +110,8 @@ class PerfilGraphActivity : AppCompatActivity() {
                             radioRodillo,
                             radioBase,
                             pares)
-
-                        val exportador: Exportador
-                        exportador = ExportadorExcel()
-                        exportador.exportar(perfil, this)
+                        val exportador = ExportadorExcel()
+                        folderPicker.launch(null)
                     }
                     .setNegativeButton("Cancelar") { dialog, whichButton -> }
                     .show()
@@ -102,7 +121,7 @@ class PerfilGraphActivity : AppCompatActivity() {
 
     }
 
-    fun Int.aRadianes(): Double {
+    fun Double.aRadianes(): Double {
         return this * Math.PI / 180
     }
 

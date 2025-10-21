@@ -5,13 +5,11 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.*
-import svaj.CalculadoraBajadaCicloidal
 import svaj.CalculadoraDetenimientoAlto
 import svaj.CalculadoraDetenimientoBajo
 import svaj.CalculadoraSVAJ
@@ -19,6 +17,7 @@ import svaj.CalculadoraSubidaCicloidal
 import svaj.GeneradorCalculadora
 import svaj.GeneradorCalculadoraBajada
 import svaj.GeneradorCalculadoraSubida
+import utils.step
 
 /**
  * GraphsActivity es la actividad que muestra gráficas de desplazamiento, velocidad, aceleración y sacudimiento
@@ -29,7 +28,7 @@ class GraphsActivity : AppCompatActivity() {
     // Altura acumulada y altura inicial para cálculos
     var alturaAcumulada: Double = 0.0
     var alturaInicial = 0.0
-    val valoresTeta = ArrayList<Array<Double>>()
+    val valoresTeta = ArrayList<Double>()
 
     /**
      * Metodo llamado cuando se crea la actividad.
@@ -66,6 +65,7 @@ class GraphsActivity : AppCompatActivity() {
             val tramos: ArrayList<Radial_LinealActivity.Tramo> =
                 extras.get("tramos") as ArrayList<Radial_LinealActivity.Tramo>
             val rpm = extras.get("rpm") as Double
+            val paso = extras.get("paso") as Double
 
             // Lista de entradas para cada gráfico
             val entriesDesplazamiento = ArrayList<Entry>()
@@ -77,7 +77,8 @@ class GraphsActivity : AppCompatActivity() {
             var xAnterior = 0
             for (tramo in tramos) {
                 val calculadora = obtenerCalculadora(tramo)
-                val entries = calcularDatosGrafica(tramo, rpm, calculadora, "desplazamiento", xAnterior)
+                val entries = calcularDatosGrafica(tramo, rpm, calculadora, "desplazamiento",
+                    xAnterior, paso)
                 entriesDesplazamiento.addAll(entries)
                 loadChartData(desplazamientoChart, entriesDesplazamiento, "Desplazamiento")
                 xAnterior += tramo.ejeX.toInt()
@@ -88,7 +89,8 @@ class GraphsActivity : AppCompatActivity() {
             for (tramo in tramos) {
                 val calculadora = obtenerCalculadora(tramo)
                 entriesVelocidad.addAll(
-                    calcularDatosGrafica(tramo, rpm, calculadora, "velocidad", xAnterior)
+                    calcularDatosGrafica(tramo, rpm, calculadora, "velocidad",
+                        xAnterior, paso)
                 )
                 loadChartData(velocidadChart, entriesVelocidad, "Velocidad")
                 xAnterior += tramo.ejeX.toInt()
@@ -98,7 +100,8 @@ class GraphsActivity : AppCompatActivity() {
             for (tramo in tramos) {
                 val calculadora = obtenerCalculadora(tramo)
                 entriesAceleracion.addAll(
-                    calcularDatosGrafica(tramo, rpm, calculadora, "aceleracion", xAnterior)
+                    calcularDatosGrafica(tramo, rpm, calculadora, "aceleracion",
+                        xAnterior, paso)
                 )
                 loadChartData(aceleracionChart, entriesAceleracion, "Aceleración")
                 xAnterior += tramo.ejeX.toInt()
@@ -108,7 +111,8 @@ class GraphsActivity : AppCompatActivity() {
             for (tramo in tramos) {
                 val calculadora = obtenerCalculadora(tramo)
                 entriesSacudimiento.addAll(
-                    calcularDatosGrafica(tramo, rpm, calculadora, "sacudimiento", xAnterior)
+                    calcularDatosGrafica(tramo, rpm, calculadora, "sacudimiento",
+                        xAnterior, paso)
                 )
                 loadChartData(sacudimientoChart, entriesSacudimiento, "Sacudimiento")
                 xAnterior += tramo.ejeX.toInt()
@@ -119,6 +123,7 @@ class GraphsActivity : AppCompatActivity() {
                 intent.putExtra("tramos", tramos)
                 intent.putExtra("rpm", rpm)
                 intent.putExtra("valoresTeta", valoresTeta)
+                intent.putExtra("paso", paso)
                 startActivity(intent)
             }
         }
@@ -135,7 +140,7 @@ class GraphsActivity : AppCompatActivity() {
      */
     fun calcularDatosGrafica(
         tramo: Radial_LinealActivity.Tramo, rpm: Double,
-        calculadora: CalculadoraSVAJ, tipoGrafica: String, valorInicial: Int
+        calculadora: CalculadoraSVAJ, tipoGrafica: String, valorInicial: Int, paso: Double
     ): ArrayList<Entry> {
         val teta = ArrayList<Double>()
         val beta = tramo.ejeX.toInt()
@@ -146,7 +151,8 @@ class GraphsActivity : AppCompatActivity() {
 
         alturaAcumulada += if (segmento == "subida") altura else -altura
 
-        for (x in valorInicial..beta + valorInicial) {
+        for (x in valorInicial..beta + valorInicial
+                step paso) {
             teta.add(x.aRadianes())
         }
 
@@ -191,7 +197,7 @@ class GraphsActivity : AppCompatActivity() {
 
             val xGrados = x.aGrados()
             if (tipoGrafica == "desplazamiento"){
-                valoresTeta.add(arrayOf(xGrados, y))
+                valoresTeta.add(y)
             }
 
             entries.add(Entry(xGrados.toFloat(), y.toFloat()))
@@ -211,6 +217,10 @@ class GraphsActivity : AppCompatActivity() {
      * Convierte un valor en grados a radianes.
      */
     fun Int.aRadianes(): Double {
+        return this * Math.PI / 180
+    }
+
+    fun Double.aRadianes(): Double {
         return this * Math.PI / 180
     }
 

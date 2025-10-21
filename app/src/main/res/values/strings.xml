@@ -40,7 +40,7 @@
     <string name="ecuaciones">Ecuaciones</string>
     <string name="altura">Altura</string>
     <string name="limpiar">Limpiar</string>
-    <string name="velocidad">Velocidad (RPM): </string>
+    <string name="velocidad">RPM: </string>
     <string name="tramos_guardados">Tramos Guardados</string>
     <string name="tituloPerfil">Generar Perfil</string>
     <string name="unidades">"Unidades: \nmm"</string>
@@ -51,5 +51,6 @@
     <string name="guardar_perfil">Guardar perfil</string>
     <string name="perfil_geometrico">Perfil Geométrico</string>
     <string name="exportar">Exportar Perfil</string>
+    <string name="paso">Paso</string>
 
 </resources>
