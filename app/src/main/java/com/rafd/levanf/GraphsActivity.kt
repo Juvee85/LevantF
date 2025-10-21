@@ -240,16 +240,18 @@ class GraphsActivity : AppCompatActivity() {
     private fun obtenerCalculadora(tramo: Radial_LinealActivity.Tramo): CalculadoraSVAJ {
         val segmento = tramo.segmento.lowercase()
         val ecuacion = tramo.ecuacion.lowercase()
-        var calculadora: CalculadoraSVAJ = CalculadoraSubidaCicloidal()
+        var calculadora: CalculadoraSVAJ
         val generador: GeneradorCalculadora = if (segmento == "subida") GeneradorCalculadoraSubida()
         else GeneradorCalculadoraBajada()
 
         when (segmento) {
             "subida", "bajada" -> {
-                if (ecuacion == "cicloidal") {
-                    calculadora = generador.crearCalculadoraCicloidal()
-                } else if (ecuacion == "mas") {
-                    calculadora = generador.crearCalculadoraMAS()
+                calculadora = when (ecuacion) {
+                    "cicloidal" -> generador.crearCalculadoraCicloidal()
+                    "mas" -> generador.crearCalculadoraMAS()
+                    "3-4-5" -> generador.crearCalculadora345()
+                    "4-5-6-7" -> generador.crearCalculadora4567()
+                    else -> generador.crearCalculadoraCicloidal()
                 }
             }
             "det. alto" -> {
