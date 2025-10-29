@@ -44,6 +44,9 @@ android {
 
 dependencies {
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    dokkaPlugin(libs.mathjax.plugin)
+    implementation(libs.purchases)
+    implementation("com.revenuecat.purchases:purchases-ui:9.12.0")
     implementation(libs.poi)
     implementation(libs.apache.poi.ooxml)
     implementation(libs.androidx.core.ktx)

@@ -14,12 +14,22 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.rafd.levanf.databinding.ActivityMenuPrincipalBinding
+import com.revenuecat.purchases.LogLevel
+import com.revenuecat.purchases.Purchases
+import com.revenuecat.purchases.PurchasesConfiguration
+import com.revenuecat.purchases.ui.revenuecatui.ExperimentalPreviewRevenueCatUIPurchasesAPI
+import com.revenuecat.purchases.ui.revenuecatui.activity.PaywallActivityLauncher
+import com.revenuecat.purchases.ui.revenuecatui.activity.PaywallResult
+import com.revenuecat.purchases.ui.revenuecatui.activity.PaywallResultHandler
 
 /**
  * MenuPrincipal es la actividad principal del menú de la aplicación.
  * Maneja la visualización del menú principal y la interacción con Firebase Realtime Database.
  */
-class MenuPrincipal : AppCompatActivity() {
+@OptIn(ExperimentalPreviewRevenueCatUIPurchasesAPI::class)
+class MenuPrincipal : AppCompatActivity() , PaywallResultHandler {
+
+    private lateinit var paywallActivityLauncher: PaywallActivityLauncher
 
     // Binding para la vista de la actividad
     private lateinit var binding: ActivityMenuPrincipalBinding
@@ -40,6 +50,11 @@ class MenuPrincipal : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        Purchases.logLevel = LogLevel.DEBUG
+        Purchases.configure(PurchasesConfiguration.Builder(this, "<API_KEY>").build())
+
+        paywallActivityLauncher = PaywallActivityLauncher(this, this)
 
         // Obtiene el correo electrónico del usuario de los extras del Intent
         email = intent.extras?.getString("name") ?: "Default Email"
@@ -83,5 +98,13 @@ class MenuPrincipal : AppCompatActivity() {
                 startActivity(Intent(this, MenuRadial::class.java).putExtra("uuid", uuid))
 
         }
+
+        this.launchPaywallActivity()
     }
+
+    private fun launchPaywallActivity() {
+        paywallActivityLauncher.launchIfNeeded(requiredEntitlementIdentifier = "pro")
+    }
+
+    override fun onActivityResult(result: PaywallResult) {}
 }

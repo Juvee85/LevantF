@@ -15,13 +15,20 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
+import com.revenuecat.purchases.LogLevel
+import com.revenuecat.purchases.Purchases
+import com.revenuecat.purchases.PurchasesConfiguration
+import com.revenuecat.purchases.ui.revenuecatui.ExperimentalPreviewRevenueCatUIPurchasesAPI
+import com.revenuecat.purchases.ui.revenuecatui.activity.PaywallActivityLauncher
+import com.revenuecat.purchases.ui.revenuecatui.activity.PaywallResult
+import com.revenuecat.purchases.ui.revenuecatui.activity.PaywallResultHandler
 
 /**
  * MainActivity es la actividad principal con la que inicia la aplicación.
  * Maneja la autenticación de usuarios utilizando Firebase Authentication.
  */
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var paywallActivityLauncher: PaywallActivityLauncher
     // Instancia de Firebase Authentication
     private lateinit var auth: FirebaseAuth
 

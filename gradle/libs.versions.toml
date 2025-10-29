@@ -10,12 +10,15 @@ material = "1.12.0"
 activity = "1.10.0"
 constraintlayout = "2.2.0"
 filamentAndroid = "1.17.1"
+mathjaxPlugin = "2.1.0"
 mpandroidchart = "v3.1.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.2.0"
 firebaseDatabase = "21.0.0"
 poi = "5.2.2"
 poiOoxml = "5.2.2"
+purchases = "9.12.0"
+purchasesUi = "<latest version>"
 
 
 [libraries]
@@ -31,10 +34,13 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 
 filament-android = { group = "com.google.ar.sceneform", name = "filament-android", version.ref = "filamentAndroid" }
 
+mathjax-plugin = { module = "org.jetbrains.dokka:mathjax-plugin", version.ref = "mathjaxPlugin" }
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 poi = { module = "org.apache.poi:poi", version.ref = "poi" }
+purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "purchases" }
+purchases-ui = { module = "com.revenuecat.purchases:purchases-ui", version.ref = "purchasesUi" }
 
 
 [plugins]
