@@ -24,6 +24,7 @@ import exportar.Exportador
 import utils.step
 import exportar.ExportadorExcel
 import exportar.Perfil
+import utils.aRadianes
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -44,7 +45,7 @@ class PerfilGraphActivity : AppCompatActivity() {
 
         val toolbar = binding.toolbar
         val textInputLayout = TextInputLayout(this)
-        textInputLayout.setPadding(80,30, 80, 30)
+        textInputLayout.setPadding(80, 30, 80, 30)
         val etNombre = EditText(this)
         textInputLayout.addView(etNombre)
 
@@ -52,7 +53,10 @@ class PerfilGraphActivity : AppCompatActivity() {
         if (extras != null) {
             toolbar.setNavigationOnClickListener {
                 val intent = Intent(this, GraphsActivity::class.java)
-                intent.putExtra("tramos", extras.get("tramos") as ArrayList<Radial_LinealActivity.Tramo>)
+                intent.putExtra(
+                    "tramos",
+                    extras.get("tramos") as ArrayList<Radial_LinealActivity.Tramo>
+                )
                 intent.putExtra("rpm", extras.getDouble("rpm"))
                 intent.putExtra("paso", extras.getDouble("paso"))
                 startActivity(intent)
@@ -63,24 +67,11 @@ class PerfilGraphActivity : AppCompatActivity() {
             val radioBase = extras.getDouble("diametroBase") / 2
             val radioRodillo = extras.getDouble("diametroRodillo") / 2
 
-            val entries = ArrayList<Entry>()
-            val pares = ArrayList<Pair<Double, Double>>()
-            for (i in 0..360 step paso) {
-                val teta = valoresTeta.get((i*(1/paso)).toInt())
-                val radioBaseX = radioBase * cos(i.aRadianes())
-                val radioBaseY = radioBase * sin(i.aRadianes())
-                val tetaX = teta * cos(i.aRadianes())
-                val tetaY = teta * sin(i.aRadianes())
-
-                val x = radioBaseX + tetaX
-                val y = radioBaseY + tetaY
-
-                entries.add(Entry(x.toFloat(), y.toFloat()))
-                pares.add(Pair(x, y))
-            }
+            val paresXY = calcularPerfil(valoresTeta, paso, radioBase)
+            val entradas = generarEntradas(paresXY)
 
             setupLineChart(binding.graficaPerfil, "Perfil")
-            loadChartData(binding.graficaPerfil, entries, "Perfil")
+            loadChartData(binding.graficaPerfil, entradas, "Perfil")
 
             val folderPicker =
                 this.registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
@@ -89,12 +80,13 @@ class PerfilGraphActivity : AppCompatActivity() {
                             selectedFolderUri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                         )
-
                         val nombre = etNombre.getText().toString()
-                        val perfil = Perfil(nombre, "Seguidor", "Lineal",
+                        val perfil = Perfil(
+                            nombre, "Seguidor", "Lineal",
                             radioRodillo,
                             radioBase,
-                            pares)
+                            paresXY
+                        )
                         val exportador = ExportadorExcel()
                         exportador.exportar(perfil, this, selectedFolderUri)
                     }
@@ -105,24 +97,54 @@ class PerfilGraphActivity : AppCompatActivity() {
                     .setTitle("Nombre del archivo")
                     .setView(textInputLayout)
                     .setPositiveButton("Aceptar") { dialog, whichButton ->
-                        val nombre = etNombre.getText().toString()
-                        val perfil = Perfil(nombre, "Seguidor", "Lineal",
-                            radioRodillo,
-                            radioBase,
-                            pares)
-                        val exportador = ExportadorExcel()
                         folderPicker.launch(null)
                     }
                     .setNegativeButton("Cancelar") { dialog, whichButton -> }
                     .show()
             }
-
         }
 
     }
 
-    fun Double.aRadianes(): Double {
-        return this * Math.PI / 180
+    /**
+     * Crea una lista de entradas a desplegar en una gráfica a partir de una lista de pares que
+     * representan las coordenadas de los puntos a graficar
+     *
+     * @param pares Lista de pares que representan las coordenadas de puntos, de manera que el
+     * primer valor corresponde a X y el segundo a Y
+     */
+    fun generarEntradas(pares: List<Pair<Double, Double>>): List<Entry>{
+        val entradas = ArrayList<Entry>()
+        for (par in pares) {
+            entradas.add(Entry(par.first.toFloat(), par.second.toFloat()))
+        }
+        return entradas
+    }
+
+    /**
+     * Calcula los puntos de un perfíl de una leva a partir de los valores de teta, el paso entre
+     * cada punto, y el radio de la base
+     *
+     * @param valoresTeta Lista con los valores de la posición de la leva
+     * @param paso El paso utilizado para generar la lista de valores de posición
+     * @param radioBase Radio de la base de la leva
+     */
+    fun calcularPerfil(valoresTeta: List<Double>, paso: Double, radioBase: Double): List<Pair<Double, Double>> {
+        val pares = ArrayList<Pair<Double, Double>>()
+        for (i in 0..360 step paso) {
+            val teta = valoresTeta[(i * (1 / paso)).toInt()]
+            val radioBaseX = radioBase * cos(i.aRadianes())
+            val radioBaseY = radioBase * sin(i.aRadianes())
+            val tetaX = teta * cos(i.aRadianes())
+            val tetaY = teta * sin(i.aRadianes())
+
+
+            val x = radioBaseX + tetaX
+            val y = radioBaseY + tetaY
+
+            pares.add(Pair(x, y))
+        }
+        return pares
     }
 
     private fun setupLineChart(scatterChart: ScatterChart, descText: String) {
@@ -171,7 +193,7 @@ class PerfilGraphActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadChartData(scatterChart: ScatterChart, entries: ArrayList<Entry>, nombreGrafica: String) {
+    private fun loadChartData(scatterChart: ScatterChart, entries: List<Entry>, nombreGrafica: String) {
         val dataSet = ScatterDataSet(entries, nombreGrafica).apply {
             color = Color.BLUE
             valueTextColor = Color.BLACK

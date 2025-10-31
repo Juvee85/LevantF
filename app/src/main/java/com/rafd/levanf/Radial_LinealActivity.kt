@@ -100,6 +100,7 @@ class Radial_LinealActivity : AppCompatActivity() {
         // Permite controlar el estado del BottomSheet
         val bottomSheetTotal = findViewById<LinearLayout>(R.id.bottomSheet)
         behaviour = BottomSheetBehavior.from(bottomSheetTotal)
+        behaviour.isDraggable = false
 
         // Configura la lista de tramos y su adaptador
         listView = findViewById(R.id.lista)
@@ -164,12 +165,12 @@ class Radial_LinealActivity : AppCompatActivity() {
      * de que lo sean.
      */
     fun verificarDatos() {
-        if (datosValidos()) {
+        if (datosValidos(tramos)) {
             findViewById<Button>(R.id.generar).isEnabled = true
             findViewById<Button>(R.id.generar).setBackgroundColor(Color.parseColor("#7B1FA2"))
             behaviour.state = BottomSheetBehavior.STATE_EXPANDED
         } else {
-            findViewById<Button>(R.id.generar).isEnabled = true
+            findViewById<Button>(R.id.generar).isEnabled = false
             findViewById<Button>(R.id.generar).setBackgroundColor(
                 ContextCompat.getColor(
                     this,
@@ -184,7 +185,7 @@ class Radial_LinealActivity : AppCompatActivity() {
      * Regresa true si todos los campos necesarios para realizar las operaciones son rellenados con
      * datos correctos, false en caso contrario.
      */
-    fun datosValidos(): Boolean {
+    fun datosValidos(tramos: List<Tramo>): Boolean {
         var alturaAcumulada = 0.0
         var alturasValidas = true
         var segmentosValidos = true

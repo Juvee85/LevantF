@@ -13,10 +13,12 @@ import com.github.mikephil.charting.data.*
 import svaj.CalculadoraDetenimientoAlto
 import svaj.CalculadoraDetenimientoBajo
 import svaj.CalculadoraSVAJ
-import svaj.CalculadoraSubidaCicloidal
 import svaj.GeneradorCalculadora
 import svaj.GeneradorCalculadoraBajada
 import svaj.GeneradorCalculadoraSubida
+import utils.aGrados
+import utils.aRadianes
+import utils.aRadianesSegundos
 import utils.step
 
 /**
@@ -204,31 +206,6 @@ class GraphsActivity : AppCompatActivity() {
         }
 
         return entries
-    }
-
-    /**
-     * Convierte un valor de rpm a radianes / segundo.
-     */
-    fun Double.aRadianesSegundos(): Double {
-        return this * 2 * Math.PI / 60
-    }
-
-    /**
-     * Convierte un valor en grados a radianes.
-     */
-    fun Int.aRadianes(): Double {
-        return this * Math.PI / 180
-    }
-
-    fun Double.aRadianes(): Double {
-        return this * Math.PI / 180
-    }
-
-    /**
-     * Convierte un valor en radianes a grados.
-     */
-    fun Double.aGrados(): Double {
-        return this * 180 / Math.PI
     }
 
     /**

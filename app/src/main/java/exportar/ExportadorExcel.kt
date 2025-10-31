@@ -35,7 +35,7 @@ class ExportadorExcel : Exportador {
         cabeceraDiametroBase.setCellValue("Diametro Base:")
         val celdaDiametroBase = filaDiametroBase
             .createCell(1)
-        celdaDiametroBase.setCellValue(perfil.radioBase*2)
+        celdaDiametroBase.setCellValue(perfil.radioBase * 2)
 
         val filaDiametroSeguidor = workSheet.createRow(4)
         val cabeceraDiametroSeguidor = filaDiametroSeguidor
@@ -43,7 +43,7 @@ class ExportadorExcel : Exportador {
         cabeceraDiametroSeguidor.setCellValue("Diametro Seguidor:")
         val celdaDiametroSeguidor = filaDiametroSeguidor
             .createCell(1)
-        celdaDiametroSeguidor.setCellValue(perfil.radioSeguidor*2)
+        celdaDiametroSeguidor.setCellValue(perfil.radioSeguidor * 2)
 
         val filaCabecera = workSheet.createRow(5)
         val celdaX = filaCabecera
@@ -63,15 +63,6 @@ class ExportadorExcel : Exportador {
             val celdaValorY = filaValores
                 .createCell(1)
             celdaValorY.setCellValue(perfil.paresXY[i].second)
-        }
-
-        val values = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, "${perfil.nombre}.xlsx")
-            put(
-                MediaStore.MediaColumns.MIME_TYPE,
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS)
         }
 
         val resolver = context.contentResolver
