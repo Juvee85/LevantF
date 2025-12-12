@@ -2,7 +2,19 @@ package svaj
 
 import kotlin.math.pow
 
+/**
+ * Calculculadora para graficar el desplazamiento, velocidad, aceleración, y el sacudimiento de una
+ * leva en un segmento de bajada con las funciones polinomio 3-4-5
+ */
 class CalculadoraBajada345 : CalculadoraSVAJ {
+
+    /**
+     * Calcula el desplazamiento en la bajada de una leva con la función 3-4-5.
+     *
+     * La ecuación usada es:
+     * $$h - h \left[10\left(\theta^{3} \over \beta^{3} \right) - 15\left(\theta^{4} \over \beta^{4} \right) + 6\left(\theta^{5} \over \beta^{5} \right)\right] + \left(h_{i}-h\right)$$
+     * @usesMathJax
+     */
     override fun calcularDesplazamiento(
         x: Double,
         altura: Double,
@@ -12,6 +24,14 @@ class CalculadoraBajada345 : CalculadoraSVAJ {
         return altura-(altura * (10*(x/beta).pow(3) - 15*(x/beta).pow(4) + 6*(x/beta).pow(5))) + (alturaInicial-altura)
     }
 
+
+    /**
+     * Calcula la velocidad en la bajada de una leva con la función 3-4-5.
+     *
+     * La ecuación usada es:
+     * $$\left(-h \left[30\left(\theta^{2} \over \beta^{3} \right) - 60\left(\theta^{3} \over \beta^{4} \right) + 30\left(\theta^{4} \over \beta^{5} \right)\right]\right)\omega$$
+     * @usesMathJax
+     */
     override fun calcularVelocidad(
         x: Double,
         altura: Double,
@@ -24,6 +44,13 @@ class CalculadoraBajada345 : CalculadoraSVAJ {
                     30*(x.pow(4)/beta.pow(5)))) * w
     }
 
+    /**
+     * Calcula la aceleración en la bajada de una leva con la función 3-4-5.
+     *
+     * La ecuación usada es:
+     * $$\left(-h \left[60\left(\theta \over \beta^{3} \right) - 180\left(\theta^{2} \over \beta^{4} \right) + 120\left(\theta^{3} \over \beta^{5} \right)\right]\right)\omega^{2}$$
+     * @usesMathJax
+     */
     override fun calcularAceleracion(
         x: Double,
         altura: Double,
@@ -36,6 +63,13 @@ class CalculadoraBajada345 : CalculadoraSVAJ {
                     120*(x.pow(3)/beta.pow(5)))) * w.pow(2)
     }
 
+    /**
+     * Calcula el sacudimiento en la bajada de una leva con la función 3-4-5.
+     *
+     * La ecuación usada es:
+     * $$\left(-h \left[\left(60 \over \beta^{3} \right) - 360\left(\theta \over \beta^{4} \right) + 360\left(\theta^{2} \over \beta^{5} \right)\right]\right)\omega^{3}$$
+     * @usesMathJax
+     */
     override fun calcularSacudimiento(
         x: Double,
         altura: Double,

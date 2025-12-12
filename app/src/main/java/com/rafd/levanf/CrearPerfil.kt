@@ -19,7 +19,6 @@ class CrearPerfil : AppCompatActivity() {
         binding = ActivityCrearPerfilBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val btnPerfil = binding.btnVerPerfil
         // Configura la toolbar
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         val extras = intent.extras

@@ -32,12 +32,9 @@
             android:name=".MenuPrincipal"
             android:exported="false" />
         <activity
-            android:name=".SVAJ_Activity"
-            android:exported="false" />
-        <activity
             android:name=".Radial_LinealActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity
             android:name=".GraphsActivity"
             android:exported="false" />

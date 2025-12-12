@@ -1,15 +1,19 @@
 package com.rafd.levanf
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.utils.MPPointF
 import svaj.CalculadoraDetenimientoAlto
 import svaj.CalculadoraDetenimientoBajo
 import svaj.CalculadoraSVAJ
@@ -137,7 +141,7 @@ class GraphsActivity : AppCompatActivity() {
      * @param rpm Las revoluciones por minuto.
      * @param calculadora La calculadora a utilizar para los cálculos.
      * @param tipoGrafica El tipo de gráfico a calcular.
-     * @param valorInicial El valor inicial para el cálculo.
+     * @param valorInicial El valor inicial del eje x para el cálculo.
      * @return Lista de entradas para la gráfica.
      */
     fun calcularDatosGrafica(
@@ -153,9 +157,14 @@ class GraphsActivity : AppCompatActivity() {
 
         alturaAcumulada += if (segmento == "subida") altura else -altura
 
+        // Evita valores duplicados al inicio de nuevos tramos
         for (x in valorInicial..beta + valorInicial
                 step paso) {
-            teta.add(x.aRadianes())
+            if (valorInicial == 0) {
+                teta.add(x.aRadianes())
+            } else {
+                teta.add((x+paso).aRadianes())
+            }
         }
 
         val betaRadianes = beta.aRadianes()
@@ -211,6 +220,7 @@ class GraphsActivity : AppCompatActivity() {
     /**
      * Recibe un objeto de tramo y determina qué tipo de calculadora requiere para generar la gráfica
      * en base al segmento y el tipo de ecuación del tramo.
+     *
      * @param tramo El tramo para el cual se determinará la calculadora.
      * @return La calculadora adecuada para el tramo.
      */
@@ -251,6 +261,12 @@ class GraphsActivity : AppCompatActivity() {
         // Habilitar interacciones
         lineChart.setTouchEnabled(true)
         lineChart.setPinchZoom(true)
+        lineChart.isDragEnabled = true
+        lineChart.setScaleEnabled(true)
+        lineChart.isHighlightPerDragEnabled = true
+        lineChart.isHighlightPerTapEnabled = true
+
+        lineChart.marker = CustomMarkerView(this, R.layout.vista_marcador)
 
         // Configuración de los ejes
         val xAxis = lineChart.xAxis
@@ -311,5 +327,26 @@ class GraphsActivity : AppCompatActivity() {
         val lineData = LineData(dataSet)
         lineChart.data = lineData
         lineChart.invalidate()
+    }
+
+    /**
+     * Clase para el marcador que se despliega en las gráficas
+     */
+    class CustomMarkerView(
+        context: Context,
+        layoutResource: Int
+    ) : MarkerView(context, layoutResource) {
+
+        private val tvContent: TextView = findViewById(R.id.tvPuntoXY)
+
+        override fun refreshContent(e: Entry?, highlight: Highlight?) {
+            tvContent.text = String.format("x: ${e?.x?.toInt()}, y: ${"%.3f".format(e?.y)}")
+            super.refreshContent(e, highlight)
+        }
+
+        override fun getOffset(): MPPointF {
+            // Centers the marker above the touched point
+            return MPPointF(-(width / 2).toFloat(), -height.toFloat())
+        }
     }
 }

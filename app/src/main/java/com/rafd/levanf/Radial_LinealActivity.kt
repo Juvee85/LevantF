@@ -1,11 +1,14 @@
 package com.rafd.levanf
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +29,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.cardview.R.color.cardview_dark_background
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
 import com.github.mikephil.charting.data.*
@@ -284,9 +288,21 @@ class Radial_LinealActivity : AppCompatActivity() {
             val ec = view.findViewById<TextInputLayout>(R.id.ecuacionelo)
 
             view.findViewById<ImageView>(R.id.limpiar).setOnClickListener {
-                tramos.removeAt(position)
-                notifyDataSetChanged()
+                if (position >= 0 && position < tramos.size) {
+                    tramos.removeAt(position)
+                    notifyDataSetChanged()
+                }
             }
+
+            view.tag = position
+
+            val oldWatcher = ejeXText.getTag(R.id.TAG_WATCHER_KEY) as? TextWatcher
+            if (oldWatcher != null) {
+                ejeXText.removeTextChangedListener(oldWatcher)
+            }
+
+            val oldAlturaWatcher = altura.getTag(R.id.TAG_WATCHER_ALTURA) as? TextWatcher
+            if (oldAlturaWatcher != null) altura.removeTextChangedListener(oldAlturaWatcher)
 
             // Asignar valores iniciales
             segmento.setText(tramo.segmento, false)
@@ -294,7 +310,36 @@ class Radial_LinealActivity : AppCompatActivity() {
             ecuacion.setText(tramo.ecuacion, false)
             altura.text = tramo.altura
 
-            view.tag = position
+            val newWatcher = object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable?) {
+                    val tramoIndex = view.tag as? Int ?: return
+                    if (tramoIndex >= 0 && tramoIndex < tramos.size) {
+                        tramos[tramoIndex].ejeX = s.toString()
+                        verificarDatos()
+                    }
+                }
+            }
+
+            // 3. Add the new watcher and Save it in the tag for next time
+            ejeXText.addTextChangedListener(newWatcher)
+            ejeXText.setTag(R.id.TAG_WATCHER_KEY, newWatcher)
+
+            val newAlturaWatcher = object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable?) {
+                    val tramoIndex = view.tag as? Int ?: return
+                    if (tramoIndex >= 0 && tramoIndex < tramos.size) {
+                        tramos[tramoIndex].altura = s.toString()
+                        verificarDatos()
+                    }
+                }
+            }
+
+            altura.addTextChangedListener(newAlturaWatcher)
+            altura.setTag(R.id.TAG_WATCHER_ALTURA, newAlturaWatcher)
 
             // Configurar adaptadores
             segmento.setAdapter(
@@ -312,58 +357,57 @@ class Radial_LinealActivity : AppCompatActivity() {
                 )
             )
 
-            // Manejar cambios en segmento
-            segmento.onItemClickListener =
-                AdapterView.OnItemClickListener { parent, _, position, _ ->
-                    val tramoIndex = view.tag as? Int ?: return@OnItemClickListener
-                    val selectedItem = parent.getItemAtPosition(position).toString()
-                    tramos[tramoIndex].segmento = selectedItem
-                    val ec = view.findViewById<TextInputLayout>(R.id.ecuacionelo)
-                    val alturaTexto = view.findViewById<TextInputLayout>(R.id.alturalo)
-                    when (selectedItem) {
-                        "Det. Alto", "Det. Bajo" -> {
-                            ec.visibility = View.INVISIBLE
-                            alturaTexto.visibility = View.INVISIBLE
-                        }
-                        else -> {
-                            ec.visibility = View.VISIBLE
-                            alturaTexto.visibility = View.VISIBLE
-                        }
-                    }
-                    verificarDatos()
-                }
-
-            // Manejar cambios en ejeX
-            ejeXText.doOnTextChanged { text, _, _, _ ->
-                val tramoIndex = view.tag as? Int ?: return@doOnTextChanged
-                tramos[tramoIndex].ejeX = text.toString()
-                verificarDatos()
-            }
-
-            // Manejar cambios en altura
-            altura.doOnTextChanged { text, _, _, _ ->
-                val tramoIndex = view.tag as? Int ?: return@doOnTextChanged
-                tramos[tramoIndex].altura = text.toString()
-                verificarDatos()
-            }
+            segmento.setOnClickListener { this.hideKeyboard() }
+            ecuacion.setOnClickListener { this.hideKeyboard() }
 
             // Manejar cambios en ecuación
             ecuacion.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, _, position, _ ->
                     val tramoIndex = view.tag as? Int ?: return@OnItemClickListener
                     val selectedItem = parent.getItemAtPosition(position).toString()
-                    tramos[tramoIndex].ecuacion = selectedItem
-                    verificarDatos()
+                    if (tramoIndex >= 0 && tramoIndex < tramos.size) {
+                        tramos[tramoIndex].ecuacion = selectedItem
+                        verificarDatos()
+                    }
                 }
 
+            // Manejar cambios en segmento
+            segmento.onItemClickListener =
+                AdapterView.OnItemClickListener { parent, _, position, _ ->
+                    val tramoIndex = view.tag as? Int ?: return@OnItemClickListener
+                    val selectedItem = parent.getItemAtPosition(position).toString()
+                    if (tramoIndex >= 0 && tramoIndex < tramos.size) {
+                        tramos[tramoIndex].segmento = selectedItem
+                        val ec = view.findViewById<TextInputLayout>(R.id.ecuacionelo)
+                        val alturaTexto = view.findViewById<TextInputLayout>(R.id.alturalo)
+                        when (selectedItem) {
+                            "Det. Alto", "Det. Bajo" -> {
+                                ec.visibility = View.INVISIBLE
+                                alturaTexto.visibility = View.INVISIBLE
+                            }
+
+                            else -> {
+                                ec.visibility = View.VISIBLE
+                                alturaTexto.visibility = View.VISIBLE
+                            }
+                        }
+                        verificarDatos()
+                    }
+                }
+
+            val alturaTexto = view.findViewById<TextInputLayout>(R.id.alturalo)
             if (segmento.text.toString() == "Det. Alto" || segmento.text.toString() == "Det. Bajo") {
                 ec.visibility = View.INVISIBLE
+                alturaTexto.visibility = View.INVISIBLE
             } else {
                 ec.visibility = View.VISIBLE
+                alturaTexto.visibility = View.VISIBLE
             }
 
             return view
         }
+
+        fun hideKeyboard() = WindowCompat.getInsetsController(window, window.decorView).hide(WindowInsetsCompat.Type.ime())
     }
 
     /**

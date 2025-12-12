@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
-    id("org.jetbrains.dokka") version "2.0.0"
+    id("org.jetbrains.dokka") version "2.1.0"
 }
 
 android {
@@ -44,6 +44,7 @@ android {
 
 dependencies {
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation(libs.core.ktx)
     dokkaPlugin(libs.mathjax.plugin)
     implementation(libs.purchases)
     implementation("com.revenuecat.purchases:purchases-ui:9.12.0")
@@ -60,6 +61,8 @@ dependencies {
     testImplementation(libs.junit)
     //Robolectric environment
     //testImplementation(libs.androidx.core)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.core.v150)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

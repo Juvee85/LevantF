@@ -1,6 +1,7 @@
 [versions]
-agp = "8.13.0"
+agp = "8.13.1"
 core = "2"
+coreVersion = "1.5.0"
 kotlin = "1.9.24"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -20,11 +21,14 @@ poi = "5.2.2"
 poiOoxml = "5.2.2"
 purchases = "9.12.0"
 purchasesUi = "<latest version>"
+coreKtxVersion = "1.7.0"
+robolectric = "4.16"
 
 
 [libraries]
 androidx-core = { module = "androidx.test:core", version.ref = "core" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-v150 = { module = "androidx.test:core", version.ref = "coreVersion" }
 apache-poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poiOoxml" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -43,6 +47,8 @@ firebase-database = { group = "com.google.firebase", name = "firebase-database",
 poi = { module = "org.apache.poi:poi", version.ref = "poi" }
 purchases = { module = "com.revenuecat.purchases:purchases", version.ref = "purchases" }
 purchases-ui = { module = "com.revenuecat.purchases:purchases-ui", version.ref = "purchasesUi" }
+core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
 
 [plugins]

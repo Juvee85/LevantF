@@ -8,8 +8,18 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
+/**
+ * Clase que permite exportar la información de un perfil geometrico a un archivo de excel
+ */
 class ExportadorExcel : Exportador {
 
+    /**
+     * Método que exporta un perfil a un archivo de excel
+     *
+     * @param perfil Perfil geometrico con la información a exportar
+     * @param context Contexto de la aplicación desde el cual se exporta
+     * @param uri Ubicación en el almacenamiento al cuál se exporta el archivo
+     */
     override fun exportar(perfil: Perfil, context: Context, uri: Uri) {
         val workbook = XSSFWorkbook()
         val workSheet = workbook.createSheet()

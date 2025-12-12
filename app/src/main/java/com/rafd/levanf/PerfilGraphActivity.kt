@@ -4,11 +4,13 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.view.ViewGroup
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toFile
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.github.mikephil.charting.charts.ScatterChart
@@ -21,16 +23,22 @@ import com.github.mikephil.charting.data.ScatterDataSet
 import com.google.android.material.textfield.TextInputLayout
 import com.rafd.levanf.databinding.ActivityPerfilGraphBinding
 import exportar.Exportador
+import exportar.ExportadorDXF
 import utils.step
 import exportar.ExportadorExcel
+import exportar.ExportadorTXT
 import exportar.Perfil
 import utils.aRadianes
+import java.io.File
 import kotlin.math.cos
+import kotlin.math.exp
 import kotlin.math.sin
 
 
 class PerfilGraphActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPerfilGraphBinding
+
+    private var exportador: Exportador = ExportadorDXF()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,13 +60,14 @@ class PerfilGraphActivity : AppCompatActivity() {
         val extras = intent.extras
         if (extras != null) {
             toolbar.setNavigationOnClickListener {
-                val intent = Intent(this, GraphsActivity::class.java)
+                val intent = Intent(this, CrearPerfil::class.java)
                 intent.putExtra(
                     "tramos",
                     extras.get("tramos") as ArrayList<Radial_LinealActivity.Tramo>
                 )
                 intent.putExtra("rpm", extras.getDouble("rpm"))
                 intent.putExtra("paso", extras.getDouble("paso"))
+                intent.putExtra("valoresTeta", extras.get("valoresTeta") as ArrayList<Double>)
                 startActivity(intent)
             }
 
@@ -87,12 +96,20 @@ class PerfilGraphActivity : AppCompatActivity() {
                             radioBase,
                             paresXY
                         )
-                        val exportador = ExportadorExcel()
+
+                        val seleccionExportador = binding.btnGrSeleccionExportar.checkedButtonId
+                        when (seleccionExportador) {
+                            R.id.btnExcel -> exportador = ExportadorExcel()
+                            R.id.btnDxf -> exportador = ExportadorDXF()
+                            R.id.btnTxt -> exportador = ExportadorTXT()
+                        }
+
                         exportador.exportar(perfil, this, selectedFolderUri)
                     }
                 }
 
             binding.btnExportar.setOnClickListener {
+                (textInputLayout.parent as? ViewGroup)?.removeView(textInputLayout)
                 AlertDialog.Builder(this)
                     .setTitle("Nombre del archivo")
                     .setView(textInputLayout)
@@ -122,25 +139,30 @@ class PerfilGraphActivity : AppCompatActivity() {
     }
 
     /**
-     * Calcula los puntos de un perfíl de una leva a partir de los valores de teta, el paso entre
+     * Calcula los puntos de un perfíl de una leva a partir de los valores de theta, el paso entre
      * cada punto, y el radio de la base
      *
-     * @param valoresTeta Lista con los valores de la posición de la leva
+     * @param valoresTheta Lista con los valores de la posición de la leva
      * @param paso El paso utilizado para generar la lista de valores de posición
      * @param radioBase Radio de la base de la leva
      */
-    fun calcularPerfil(valoresTeta: List<Double>, paso: Double, radioBase: Double): List<Pair<Double, Double>> {
+    fun calcularPerfil(valoresTheta: List<Double>, paso: Double, radioBase: Double): List<Pair<Double, Double>> {
         val pares = ArrayList<Pair<Double, Double>>()
+        println("Tamaño total: ${valoresTheta.size}")
+        for (i in 1798..1805) {
+            if (i < valoresTheta.size) {
+                println("Índice $i: ${valoresTheta[i]}")
+            }
+        }
         for (i in 0..360 step paso) {
-            val teta = valoresTeta[(i * (1 / paso)).toInt()]
+            val theta = valoresTheta[(i * (1 / paso)).toInt()]
             val radioBaseX = radioBase * cos(i.aRadianes())
             val radioBaseY = radioBase * sin(i.aRadianes())
-            val tetaX = teta * cos(i.aRadianes())
-            val tetaY = teta * sin(i.aRadianes())
+            val thetaX = theta * cos(i.aRadianes())
+            val thetaY = theta * sin(i.aRadianes())
 
-
-            val x = radioBaseX + tetaX
-            val y = radioBaseY + tetaY
+            val x = radioBaseX + thetaX
+            val y = radioBaseY + thetaY
 
             pares.add(Pair(x, y))
         }

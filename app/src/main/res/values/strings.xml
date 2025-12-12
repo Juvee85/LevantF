@@ -52,5 +52,9 @@
     <string name="perfil_geometrico">Perfil Geométrico</string>
     <string name="exportar">Exportar Perfil</string>
     <string name="paso">Paso</string>
+    <string name="botonExcel">.xlsx</string>
+    <string name="botonTxt">.txt</string>
+    <string name="botonDXF">.dxf</string>
+    <string name="seleccion_exportar">Elija el formato para exportar</string>
 
 </resources>

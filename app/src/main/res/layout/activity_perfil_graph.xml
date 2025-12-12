@@ -32,6 +32,44 @@
         android:layout_marginVertical="30dp"
         android:layout_marginHorizontal="20dp"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/seleccion_exportar"
+        android:textSize="20sp"
+        />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/btnGrSeleccionExportar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:singleSelection="true"
+        android:layout_gravity="center"
+        app:selectionRequired="true"
+        app:checkedButton="@+id/btnDxf"
+        >
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnExcel"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/botonExcel" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDxf"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/botonDXF"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTxt"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/botonTxt"/>
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
     <Button android:id="@+id/btnExportar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
