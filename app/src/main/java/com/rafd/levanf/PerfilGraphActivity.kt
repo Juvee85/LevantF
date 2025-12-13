@@ -10,7 +10,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toFile
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.github.mikephil.charting.charts.ScatterChart
@@ -29,9 +28,7 @@ import exportar.ExportadorExcel
 import exportar.ExportadorTXT
 import exportar.Perfil
 import utils.aRadianes
-import java.io.File
 import kotlin.math.cos
-import kotlin.math.exp
 import kotlin.math.sin
 
 
@@ -147,25 +144,23 @@ class PerfilGraphActivity : AppCompatActivity() {
      * @param radioBase Radio de la base de la leva
      */
     fun calcularPerfil(valoresTheta: List<Double>, paso: Double, radioBase: Double): List<Pair<Double, Double>> {
-        val pares = ArrayList<Pair<Double, Double>>()
-        println("Tamaño total: ${valoresTheta.size}")
-        for (i in 1798..1805) {
-            if (i < valoresTheta.size) {
-                println("Índice $i: ${valoresTheta[i]}")
-            }
-        }
-        for (i in 0..360 step paso) {
-            val theta = valoresTheta[(i * (1 / paso)).toInt()]
-            val radioBaseX = radioBase * cos(i.aRadianes())
-            val radioBaseY = radioBase * sin(i.aRadianes())
-            val thetaX = theta * cos(i.aRadianes())
-            val thetaY = theta * sin(i.aRadianes())
+        val pares = ArrayList<Pair<Double, Double>>(valoresTheta.size)
+
+        for (i in valoresTheta.indices) {
+            val angulo = (i * paso).aRadianes()
+
+            val theta = valoresTheta[i]
+            val radioBaseX = radioBase * cos(angulo)
+            val radioBaseY = radioBase * sin(angulo)
+            val thetaX = theta * cos(angulo)
+            val thetaY = theta * sin(angulo)
 
             val x = radioBaseX + thetaX
             val y = radioBaseY + thetaY
 
-            pares.add(Pair(x, y))
+            pares.add(x to y)
         }
+
         return pares
     }
 

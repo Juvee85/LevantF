@@ -148,7 +148,7 @@ class GraphsActivity : AppCompatActivity() {
         tramo: Radial_LinealActivity.Tramo, rpm: Double,
         calculadora: CalculadoraSVAJ, tipoGrafica: String, valorInicial: Int, paso: Double
     ): ArrayList<Entry> {
-        val teta = ArrayList<Double>()
+        val theta = ArrayList<Double>()
         val beta = tramo.ejeX.toInt()
         val altura = tramo.altura.toDoubleOrNull() ?: 0.0
         val segmento = tramo.segmento.lowercase()
@@ -161,14 +161,14 @@ class GraphsActivity : AppCompatActivity() {
         for (x in valorInicial..beta + valorInicial
                 step paso) {
             if (valorInicial == 0) {
-                teta.add(x.aRadianes())
+                theta.add(x.aRadianes())
             } else {
-                teta.add((x+paso).aRadianes())
+                theta.add((x+paso).aRadianes())
             }
         }
 
         val betaRadianes = beta.aRadianes()
-        for (x in teta) {
+        for (x in theta) {
             // Realiza el cálculo en base al tipo de gráfico
             val y = when (tipoGrafica) {
                 "desplazamiento" -> {
