@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -31,7 +29,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
-import com.github.mikephil.charting.data.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.Firebase
@@ -39,13 +36,14 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import svaj.Tramo
 import utils.limitarDecimal
 
 /**
- * Radial_LinealActivity es la actividad que permite a los usuarios gestionar tramos radiales y lineales.
+ * RadialLinealActivity es la actividad que permite a los usuarios gestionar tramos radiales y lineales.
  * Utiliza Firebase Realtime Database para guardar y cargar tramos.
  */
-class Radial_LinealActivity : AppCompatActivity() {
+class RadialLinealActivity : AppCompatActivity() {
 
     // Referencia a la base de datos de Firebase
     private val userRef = Firebase.database.getReference("Usuarios")
@@ -195,7 +193,7 @@ class Radial_LinealActivity : AppCompatActivity() {
 
         var segmentoAnterior = ""
         for (tramo in tramos) {
-            val altura = tramo.altura.toDoubleOrNull() ?: 0.0
+            val altura = tramo.altura
             val segmento = tramo.segmento.lowercase()
 
             when (segmento) {
@@ -222,7 +220,7 @@ class Radial_LinealActivity : AppCompatActivity() {
             segmentoAnterior = segmento
         }
 
-        return 360 == tramos.sumOf { it.ejeX.toIntOrNull() ?: 0 }
+        return 360 == tramos.sumOf { it.ejeX }
             .apply { findViewById<TextView>(R.id.total).text = this.toString() + " " }
                 && alturaAcumulada == 0.0
                 && findViewById<EditText>(R.id.etVelocidad).text.toString().isNotEmpty()
@@ -252,9 +250,9 @@ class Radial_LinealActivity : AppCompatActivity() {
                         tramos.add(
                             Tramo(
                                 it.child("segmento").value.toString(),
-                                it.child("ejeX").value.toString(),
+                                it.child("ejeX").value.toString().toInt(),
                                 it.child("ecuacion").value.toString(),
-                                it.child("altura").value.toString()
+                                it.child("altura").value.toString().toDouble()
                             )
                         )
                     }
@@ -305,9 +303,9 @@ class Radial_LinealActivity : AppCompatActivity() {
 
             // Asignar valores iniciales
             segmento.setText(tramo.segmento, false)
-            ejeXText.text = tramo.ejeX
+            ejeXText.text = tramo.ejeX.toString()
             ecuacion.setText(tramo.ecuacion, false)
-            altura.text = tramo.altura
+            altura.text = tramo.altura.toString()
 
             val newWatcher = object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -315,13 +313,13 @@ class Radial_LinealActivity : AppCompatActivity() {
                 override fun afterTextChanged(s: Editable?) {
                     val tramoIndex = view.tag as? Int ?: return
                     if (tramoIndex >= 0 && tramoIndex < tramos.size) {
-                        tramos[tramoIndex].ejeX = s.toString()
+                        val value = s.toString()
+                        tramos[tramoIndex].ejeX = if (value.isNotEmpty()) value.toInt() else 0
                         verificarDatos()
                     }
                 }
             }
 
-            // 3. Add the new watcher and Save it in the tag for next time
             ejeXText.addTextChangedListener(newWatcher)
             ejeXText.setTag(R.id.TAG_WATCHER_KEY, newWatcher)
 
@@ -331,7 +329,8 @@ class Radial_LinealActivity : AppCompatActivity() {
                 override fun afterTextChanged(s: Editable?) {
                     val tramoIndex = view.tag as? Int ?: return
                     if (tramoIndex >= 0 && tramoIndex < tramos.size) {
-                        tramos[tramoIndex].altura = s.toString()
+                        val value = s.toString()
+                        tramos[tramoIndex].altura = if (value.isNotEmpty()) value.toDouble() else  0.0
                         verificarDatos()
                     }
                 }
@@ -407,43 +406,5 @@ class Radial_LinealActivity : AppCompatActivity() {
         }
 
         fun hideKeyboard() = WindowCompat.getInsetsController(window, window.decorView).hide(WindowInsetsCompat.Type.ime())
-    }
-
-    /**
-     * Clase que representa un tramo.
-     */
-    data class Tramo(
-        var segmento: String = "Subida",
-        var ejeX: String = "",
-        var ecuacion: String = "Cicloidal",
-        var altura: String = ""
-    ) : Parcelable {
-        constructor(parcel: Parcel) : this(
-            parcel.readString().toString(),
-            parcel.readString().toString(),
-            parcel.readString().toString(),
-            parcel.readString().toString()
-        )
-
-        override fun writeToParcel(parcel: Parcel, flags: Int) {
-            parcel.writeString(segmento)
-            parcel.writeString(ejeX)
-            parcel.writeString(ecuacion)
-            parcel.writeString(altura)
-        }
-
-        override fun describeContents(): Int {
-            return 0
-        }
-
-        companion object CREATOR : Parcelable.Creator<Tramo> {
-            override fun createFromParcel(parcel: Parcel): Tramo {
-                return Tramo(parcel)
-            }
-
-            override fun newArray(size: Int): Array<Tramo?> {
-                return arrayOfNulls(size)
-            }
-        }
     }
 }

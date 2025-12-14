@@ -40,7 +40,7 @@ class MenuRadial : AppCompatActivity() {
 
         // Configura el listener para el botón de actividad lineal pasan el uuid para uso posterior
         binding.btnLineal.setOnClickListener {
-            val intent = Intent(this, Radial_LinealActivity::class.java).putExtra("uuid", uuid)
+            val intent = Intent(this, RadialLinealActivity::class.java).putExtra("uuid", uuid)
             startActivity(intent)
         }
     }

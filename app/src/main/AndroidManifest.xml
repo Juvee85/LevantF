@@ -32,7 +32,7 @@
             android:name=".MenuPrincipal"
             android:exported="false" />
         <activity
-            android:name=".Radial_LinealActivity"
+            android:name=".RadialLinealActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity

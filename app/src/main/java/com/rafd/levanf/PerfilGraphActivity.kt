@@ -23,13 +23,11 @@ import com.google.android.material.textfield.TextInputLayout
 import com.rafd.levanf.databinding.ActivityPerfilGraphBinding
 import exportar.Exportador
 import exportar.ExportadorDXF
-import utils.step
 import exportar.ExportadorExcel
 import exportar.ExportadorTXT
 import exportar.Perfil
-import utils.aRadianes
-import kotlin.math.cos
-import kotlin.math.sin
+import svaj.GeneradorPerfil
+import svaj.Tramo
 
 
 class PerfilGraphActivity : AppCompatActivity() {
@@ -60,7 +58,7 @@ class PerfilGraphActivity : AppCompatActivity() {
                 val intent = Intent(this, CrearPerfil::class.java)
                 intent.putExtra(
                     "tramos",
-                    extras.get("tramos") as ArrayList<Radial_LinealActivity.Tramo>
+                    extras.get("tramos") as ArrayList<Tramo>
                 )
                 intent.putExtra("rpm", extras.getDouble("rpm"))
                 intent.putExtra("paso", extras.getDouble("paso"))
@@ -72,8 +70,9 @@ class PerfilGraphActivity : AppCompatActivity() {
             val paso = extras.getDouble("paso")
             val radioBase = extras.getDouble("diametroBase") / 2
             val radioRodillo = extras.getDouble("diametroRodillo") / 2
+            val generador = GeneradorPerfil()
 
-            val paresXY = calcularPerfil(valoresTeta, paso, radioBase)
+            val paresXY = generador.calcularPerfil(valoresTeta, paso, radioBase)
             val entradas = generarEntradas(paresXY)
 
             setupLineChart(binding.graficaPerfil, "Perfil")
@@ -133,35 +132,6 @@ class PerfilGraphActivity : AppCompatActivity() {
             entradas.add(Entry(par.first.toFloat(), par.second.toFloat()))
         }
         return entradas
-    }
-
-    /**
-     * Calcula los puntos de un perfíl de una leva a partir de los valores de theta, el paso entre
-     * cada punto, y el radio de la base
-     *
-     * @param valoresTheta Lista con los valores de la posición de la leva
-     * @param paso El paso utilizado para generar la lista de valores de posición
-     * @param radioBase Radio de la base de la leva
-     */
-    fun calcularPerfil(valoresTheta: List<Double>, paso: Double, radioBase: Double): List<Pair<Double, Double>> {
-        val pares = ArrayList<Pair<Double, Double>>(valoresTheta.size)
-
-        for (i in valoresTheta.indices) {
-            val angulo = (i * paso).aRadianes()
-
-            val theta = valoresTheta[i]
-            val radioBaseX = radioBase * cos(angulo)
-            val radioBaseY = radioBase * sin(angulo)
-            val thetaX = theta * cos(angulo)
-            val thetaY = theta * sin(angulo)
-
-            val x = radioBaseX + thetaX
-            val y = radioBaseY + thetaY
-
-            pares.add(x to y)
-        }
-
-        return pares
     }
 
     private fun setupLineChart(scatterChart: ScatterChart, descText: String) {

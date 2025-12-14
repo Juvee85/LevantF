@@ -20,6 +20,7 @@ import svaj.CalculadoraSVAJ
 import svaj.GeneradorCalculadora
 import svaj.GeneradorCalculadoraBajada
 import svaj.GeneradorCalculadoraSubida
+import svaj.Tramo
 import utils.aGrados
 import utils.aRadianes
 import utils.aRadianesSegundos
@@ -47,7 +48,7 @@ class GraphsActivity : AppCompatActivity() {
         // Configura la toolbar
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationOnClickListener {
-            val intent = Intent(this, Radial_LinealActivity::class.java)
+            val intent = Intent(this, RadialLinealActivity::class.java)
             startActivity(intent)
         }
 
@@ -68,8 +69,8 @@ class GraphsActivity : AppCompatActivity() {
 
         // Procesa los extras si no son nulos
         if (extras != null) {
-            val tramos: ArrayList<Radial_LinealActivity.Tramo> =
-                extras.get("tramos") as ArrayList<Radial_LinealActivity.Tramo>
+            val tramos: ArrayList<Tramo> =
+                extras.get("tramos") as ArrayList<Tramo>
             val rpm = extras.get("rpm") as Double
             val paso = extras.get("paso") as Double
 
@@ -87,7 +88,7 @@ class GraphsActivity : AppCompatActivity() {
                     xAnterior, paso)
                 entriesDesplazamiento.addAll(entries)
                 loadChartData(desplazamientoChart, entriesDesplazamiento, "Desplazamiento")
-                xAnterior += tramo.ejeX.toInt()
+                xAnterior += tramo.ejeX
                 alturaInicial = alturaAcumulada
             }
 
@@ -99,7 +100,7 @@ class GraphsActivity : AppCompatActivity() {
                         xAnterior, paso)
                 )
                 loadChartData(velocidadChart, entriesVelocidad, "Velocidad")
-                xAnterior += tramo.ejeX.toInt()
+                xAnterior += tramo.ejeX
             }
 
             xAnterior = 0
@@ -110,7 +111,7 @@ class GraphsActivity : AppCompatActivity() {
                         xAnterior, paso)
                 )
                 loadChartData(aceleracionChart, entriesAceleracion, "Aceleración")
-                xAnterior += tramo.ejeX.toInt()
+                xAnterior += tramo.ejeX
             }
 
             xAnterior = 0
@@ -145,12 +146,12 @@ class GraphsActivity : AppCompatActivity() {
      * @return Lista de entradas para la gráfica.
      */
     fun calcularDatosGrafica(
-        tramo: Radial_LinealActivity.Tramo, rpm: Double,
+        tramo: Tramo, rpm: Double,
         calculadora: CalculadoraSVAJ, tipoGrafica: String, valorInicial: Int, paso: Double
     ): ArrayList<Entry> {
         val theta = ArrayList<Double>()
-        val beta = tramo.ejeX.toInt()
-        val altura = tramo.altura.toDoubleOrNull() ?: 0.0
+        val beta = tramo.ejeX
+        val altura = tramo.altura
         val segmento = tramo.segmento.lowercase()
         val entries = ArrayList<Entry>()
         val w = rpm.aRadianesSegundos()
@@ -224,7 +225,7 @@ class GraphsActivity : AppCompatActivity() {
      * @param tramo El tramo para el cual se determinará la calculadora.
      * @return La calculadora adecuada para el tramo.
      */
-    private fun obtenerCalculadora(tramo: Radial_LinealActivity.Tramo): CalculadoraSVAJ {
+    private fun obtenerCalculadora(tramo: Tramo): CalculadoraSVAJ {
         val segmento = tramo.segmento.lowercase()
         val ecuacion = tramo.ecuacion.lowercase()
         var calculadora: CalculadoraSVAJ
