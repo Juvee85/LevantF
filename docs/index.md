@@ -16,4 +16,4 @@ Bienvenido a la documentación técnica de LevantF. En esta Wiki puedes entcontr
 * **Objetivo:** Conocer las etrategias de pruebas utilizadas para validar la aplicación.
 * **Contenido:** Tipos de pruebas, con información de que elementos probar en cada una y que frameworks utilizar.
 
-## [Documentación API](../dokka/html/index.html)
+## [Documentación API](https://juvee85.github.io/LevantF/dokka/html/index.html)
