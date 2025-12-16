@@ -24,7 +24,7 @@ Toda la documentación técnica, se encuentra en la Wiki interna.
 * Información sobre las tecnologías utilizadas.
 * Detalles sobre la estrategia de pruebas.
 
-**[Documentación API](dokka/html/index.html)**
+**[Documentación API](https://juvee85.github.io/LevantF/dokka/html/index.html)**
 
 ---
 *Última actualización: Diciembre 2025*
