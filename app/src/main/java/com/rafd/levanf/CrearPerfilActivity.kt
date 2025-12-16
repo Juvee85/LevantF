@@ -8,7 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import com.rafd.levanf.databinding.ActivityCrearPerfilBinding
 import svaj.Tramo
 
-class CrearPerfil : AppCompatActivity() {
+class CrearPerfilActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCrearPerfilBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,10 +21,7 @@ class CrearPerfil : AppCompatActivity() {
         val extras = intent.extras
         if (extras != null) {
             toolbar.setNavigationOnClickListener {
-                val intent = Intent(this, GraphsActivity::class.java)
-                intent.putExtra("tramos", extras.get("tramos") as ArrayList<Tramo>)
-                intent.putExtra("rpm", extras.getDouble("rpm"))
-                startActivity(intent)
+                onBackPressedDispatcher.onBackPressed()
             }
 
             binding.btnVerPerfil.setOnClickListener {

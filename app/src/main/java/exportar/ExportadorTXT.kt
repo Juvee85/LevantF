@@ -40,7 +40,7 @@ class ExportadorTXT : Exportador {
         }
     }
 
-    private fun generarTXT(perfil: Perfil): String {
+    fun generarTXT(perfil: Perfil): String {
         val sb = StringBuilder()
         for ((x, y) in perfil.paresXY) {
             sb.appendLine("$x $y 0.0")

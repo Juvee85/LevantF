@@ -39,6 +39,11 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 
@@ -59,10 +64,11 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
     testImplementation(libs.junit)
-    //Robolectric environment
-    //testImplementation(libs.androidx.core)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.core.v150)
+    androidTestImplementation(libs.androidx.espresso.core.v370)
+    androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation("androidx.test:rules:1.7.0")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

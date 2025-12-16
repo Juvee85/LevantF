@@ -55,15 +55,7 @@ class PerfilGraphActivity : AppCompatActivity() {
         val extras = intent.extras
         if (extras != null) {
             toolbar.setNavigationOnClickListener {
-                val intent = Intent(this, CrearPerfil::class.java)
-                intent.putExtra(
-                    "tramos",
-                    extras.get("tramos") as ArrayList<Tramo>
-                )
-                intent.putExtra("rpm", extras.getDouble("rpm"))
-                intent.putExtra("paso", extras.getDouble("paso"))
-                intent.putExtra("valoresTeta", extras.get("valoresTeta") as ArrayList<Double>)
-                startActivity(intent)
+                onBackPressedDispatcher.onBackPressed()
             }
 
             val valoresTeta = extras.get("valoresTeta") as ArrayList<Double>

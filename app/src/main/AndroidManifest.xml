@@ -16,7 +16,7 @@
             android:name=".PerfilGraphActivity"
             android:exported="false" />
         <activity
-            android:name=".CrearPerfil"
+            android:name=".CrearPerfilActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity

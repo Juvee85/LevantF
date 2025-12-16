@@ -126,7 +126,7 @@ class GraphsActivity : AppCompatActivity() {
             }
 
             findViewById<Button>(R.id.btnCrearPerfil).setOnClickListener {
-                val intent = Intent(this, CrearPerfil::class.java)
+                val intent = Intent(this, CrearPerfilActivity::class.java)
                 intent.putExtra("tramos", tramos)
                 intent.putExtra("rpm", rpm)
                 intent.putExtra("valoresTeta", valoresTeta)

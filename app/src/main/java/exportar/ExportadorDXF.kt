@@ -40,7 +40,7 @@ class ExportadorDXF : Exportador {
         }
     }
 
-    private fun generarDXF(perfil: Perfil): String {
+    fun generarDXF(perfil: Perfil): String {
         val sb = StringBuilder()
 
         // DXF HEADER

@@ -4,7 +4,7 @@
 
 El objetivo de la aplicación es ayudar en el diseño de levas, para esto, el usuarioo provee datos de cada tramo del recorrido de la leva y la rotación con la que se mueve para calcular la velocidad, aceleración y sacudimiento. 
 
-Después de pasar por el menú, en la pantalla principal, Radial_LinealActivity, se ingresan los datos de manera que el usuario ingresa los parámetros por cada tramo que decide agregar; en caso de que se seleccione un tramo de detenimiento, se debe ocultar el campo de ecuación y de altura, el eje x total debe terminar en 360, y la altura en 0 (subidas - bajadas).
+Después de pasar por el menú, en la pantalla principal, RadialLinealActivity, se ingresan los datos de manera que el usuario ingresa los parámetros por cada tramo que decide agregar; en caso de que se seleccione un tramo de detenimiento, se debe ocultar el campo de ecuación y de altura, el eje x total debe terminar en 360, y la altura en 0 (subidas - bajadas).
 
 Posteriormente, se revisan las gráficas SVAJ en la pantalla GraphsActivity, y se puede continuar a generar el perfil. En la siguiente pantalla se indica el diametro de la base y del rodillo; sin embargo, el del rodillo aún no es utilizado en los cálculos posteriores. En la última pantalla del flujo, se despliega el perfil geométrico y da 3 opciones para exportar, se realiza con objetos que implementan la interfaz Exportador como se muestra en el snippet de PerfilGraphActivity
 
@@ -39,7 +39,7 @@ Todas las clases e interfaces que conforman el patrón se encuentran en el paque
 El código que utiliza las calculadoras en GraphsActivity se ve así
 
 ```kotlin
-private fun obtenerCalculadora(tramo: Radial_LinealActivity.Tramo): CalculadoraSVAJ {
+private fun obtenerCalculadora(tramo: Tramo): CalculadoraSVAJ {
         val segmento = tramo.segmento.lowercase()
         val ecuacion = tramo.ecuacion.lowercase()
         var calculadora: CalculadoraSVAJ
@@ -78,8 +78,25 @@ for (tramo in tramos) {
          xAnterior, paso)
      entriesDesplazamiento.addAll(entries)
      loadChartData(desplazamientoChart, entriesDesplazamiento, "Desplazamiento")
-     xAnterior += tramo.ejeX.toInt()
+     xAnterior += tramo.ejeX
      alturaInicial = alturaAcumulada
 }
 ```
 xAnterior se utiliza para determinar en donde termina cada tramo, se selecciona la calculadora con la información del tramo y se realizan los calculos para generar entradas de la gráfica
+
+## Formulas de desplazamiento
+
+Las formulas del desplazamiento de todas las funciones son ligeramente diferente a como fueron originalmente descritas por el profesor, añadiendo la suma de la altura inicial para las subidas y la diferencia de la altura incial con la altura del segmento para las bajadas, de manera que la función para calcular el desplazamiento en un segmento de subida cicloidal es:
+```kotlin
+override fun calcularDesplazamiento(x: Double, altura: Double, beta: Double, alturaInicial: Double): Double {
+    return altura * ((x / beta) - ((1 / (2 * PI)) * sin(2 * PI * (x / beta)))) + alturaInicial
+}
+```
+Y para la bajada:
+```kotlin
+override fun calcularDesplazamiento(x: Double, altura: Double, beta: Double, alturaInicial: Double): Double {
+    return altura - (altura * ((x / beta) - ((1 / (2 * PI)) * sin(2 * PI * (x / beta))))) + (alturaInicial-altura)
+}
+```
+
+Esto se añade a la formula para desplazarlas verticalmente para que al momento de concatenar los resultados en la gráfica, el desplazamiento inicie en el punto en el que el segmento anterior terminó.

@@ -21,6 +21,35 @@ class ExportadorExcel : Exportador {
      * @param uri Ubicación en el almacenamiento al cuál se exporta el archivo
      */
     override fun exportar(perfil: Perfil, context: Context, uri: Uri) {
+        val workbook = generarWorkbook(perfil)
+
+        val resolver = context.contentResolver
+        val folderDocumentUri = DocumentsContract.buildDocumentUriUsingTree(
+            uri,
+            DocumentsContract.getTreeDocumentId(uri)
+        )
+
+        val docUri = DocumentsContract.createDocument(
+            resolver,
+            folderDocumentUri,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "${perfil.nombre}.xlsx"
+        )
+        docUri?.let {
+            resolver.openOutputStream(it)?.use { outputStream ->
+                workbook.write(outputStream)
+            }
+        }
+
+        workbook.close()
+    }
+
+    /**
+     * Crea el work book con l información del pergil geométrico de una leva
+     *
+     * @param perfil Perfil geometrico con la información a exportar
+     */
+    fun generarWorkbook(perfil: Perfil): XSSFWorkbook {
         val workbook = XSSFWorkbook()
         val workSheet = workbook.createSheet()
 
@@ -75,24 +104,6 @@ class ExportadorExcel : Exportador {
             celdaValorY.setCellValue(perfil.paresXY[i].second)
         }
 
-        val resolver = context.contentResolver
-        val folderDocumentUri = DocumentsContract.buildDocumentUriUsingTree(
-            uri,
-            DocumentsContract.getTreeDocumentId(uri)
-        )
-
-        val docUri = DocumentsContract.createDocument(
-            resolver,
-            folderDocumentUri,
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "${perfil.nombre}.xlsx"
-        )
-        docUri?.let {
-            resolver.openOutputStream(it)?.use { outputStream ->
-                workbook.write(outputStream)
-            }
-        }
-
-        workbook.close()
+        return workbook
     }
 }
